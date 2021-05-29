@@ -11,3 +11,7 @@ The network consists of 4 convolutional layers:
 - 24 x 36
 
 These layers are then feed into a relu activated feed forward network for prediction.
+
+![Screenshot 2021-05-29 183248 - Copy](https://user-images.githubusercontent.com/46573513/120086408-9e704d80-c0ac-11eb-9efc-87ad4dfa2eed.png)
+
+![Screenshot 2021-05-29 183248](https://user-images.githubusercontent.com/46573513/120086409-a03a1100-c0ac-11eb-9157-bff2220e0c69.png)
