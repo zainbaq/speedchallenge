@@ -74,9 +74,3 @@ class SpeedDetector(nn.Module):
                         'optimizer_state_dict': optimizer.state_dict(),
                         'loss': loss
                         }, f_path)
-                
-        def load_checkpoint(self, checkpoint_path, model, optimizer):
-                checkpoint = torch.load(checkpoint_path)
-                model.load_state_dict(checkpoint['model_state_dict'])
-                optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-                return model, optimizer
