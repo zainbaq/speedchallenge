@@ -24,7 +24,7 @@ parser.add_argument('--video_path', nargs="?", default='data/raw_video/train.mp4
 
 args = parser.parse_args()
 
-scaler = pickle.load(open(args.scaler_path, 'rb'))
+# scaler = pickle.load(open(args.scaler_path, 'rb'))
 labels = pd.read_csv(args.label_path, header=None)
 VIDEO_PATH = args.video_path
 
@@ -162,7 +162,8 @@ def main():
     print(predictions.shape)
     
     # %%
-    unscaled_predictions = list(dataset.scaler.inverse_transform(
+    scaler = pickle.load(open('data/scalers/scaler.sav', 'rb'))
+    unscaled_predictions = list(scaler.inverse_transform(
         np.array(predictions).reshape(-1, 1)
     ).reshape(-1))
 
