@@ -1,5 +1,3 @@
-from torchvision.transforms.transforms import Grayscale
-import utils
 import cv2 as cv
 import os
 import torch as torch
@@ -8,18 +6,18 @@ from torch.utils.data import Dataset
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 import pickle
+from modules import utils
 import argparse
-import matplotlib.pyplot as plt
-
 
 class DashCamDataset(Dataset):
     
-    def normalize(self, arr, return_scaler=True, scalerfile='data/scalers/scaler.sav'):
+    def normalize(self, arr, scalerfile, return_scaler=True):
         scaler = StandardScaler()
         normed = scaler.fit_transform(arr.reshape(-1, 1))
         
-        # save scaler
-        pickle.dump(scaler, open(scalerfile, 'wb'))
+        if scalerfile != None:
+            # save scaler
+            pickle.dump(scaler, open(scalerfile, 'wb'))
         
         if return_scaler:
             return normed, scaler
@@ -38,14 +36,14 @@ class DashCamDataset(Dataset):
                 continue
         return data
 
-    def __init__(self, video_path, labels_path, transform=None, target_transform=None):
+    def __init__(self, video_path, labels_path, transform=None, target_transform=None, scalerfile='data/scalers/speed_scaler.sav'):
         self.frame_labels = pd.read_csv(labels_path)
         self.frame_labels.columns = ['speed']
         self.transform = transform
         self.target_transform = target_transform
         
         if self.target_transform == 'norm':
-            self.y, self.scaler = self.normalize(self.frame_labels.speed.values)
+            self.y, self.scaler = self.normalize(self.frame_labels.speed.values, scalerfile)
         elif self.target_transform == None:
             self.y = self.frame_labels.speed.values.reshape(-1, 1)
         
@@ -75,27 +73,15 @@ class DashCamDataset(Dataset):
         return sample
 
 def main():
-    from torchvision import transforms
-    image_transforms = transforms.Compose([
-        transforms.ToPILImage(),
-        transforms.CenterCrop((150, 480)),
-        transforms.RandomHorizontalFlip(p=0.5),
-        transforms.ColorJitter(),
-        transforms.ToTensor(),
-        transforms.Grayscale(),
-        transforms.Normalize([0], [1])
-    ])
 
-    dataset = DashCamDataset(
-        'data/',
-        'data/labels/train.txt',
-        transform=image_transforms
-    )
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--target_path', nargs="?", default=None, help='path to save optical flow frames')
+    parser.add_argument('--show', nargs="?", default=False, help='show frames or not')
+    parser.add_argument('--video_path', nargs="?", default='data/raw_video/train.mp4', help='path to video')
 
-    sample = dataset.__getitem__(0)
-    plt.imshow(transforms.ToPILImage()(sample['image']))
-    plt.show()
-
+    args = parser.parse_args()
+    
+    utils.video_to_optical_flow_frames(args.video_path, args.show, args.target_path)
     
 if __name__ == '__main__':
     main()

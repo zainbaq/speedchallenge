@@ -1,9 +1,6 @@
 # %%
-from numpy.core.fromnumeric import shape
-from torch._C import device
-from preprocess import DashCamDataset
-from model import SpeedDetector
-import utils
+from modules.preprocess import DashCamDataset
+from modules.model import SpeedDetector
 import argparse
 import torch as torch
 import torch.nn as nn
@@ -91,7 +88,7 @@ args = parser.parse_args()
 
 # device to train on
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
-S_PATH = 'checkpoints/' + args.save_name
+S_PATH = '../checkpoints/' + args.save_name
 
 print(f'device: {DEVICE}')
 

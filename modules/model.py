@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-import time
 
 # Model Definition
 class SpeedDetector(nn.Module):
